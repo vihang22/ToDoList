@@ -1,7 +1,9 @@
 package com.ckeeda.todolist;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -49,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
         Task_list = new ArrayList<>();
         setSupportActionBar(tb);
 
-        getTasklist();
+        //getTasklist();
+        new Load().execute();
 
          mAdapter = new Tasklist_Adapter(Task_list,this);
         RecyclerView.LayoutManager lm = new LinearLayoutManager(getApplicationContext());
@@ -205,5 +208,34 @@ public class MainActivity extends AppCompatActivity {
                  showDialog();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    class Load extends AsyncTask<Void,Void, Void> {
+
+        ProgressDialog progDailog;
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            getTasklist();
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progDailog = new ProgressDialog(MainActivity.this);
+            progDailog.setMessage("Loading...");
+            progDailog.setIndeterminate(false);
+            progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progDailog.setCancelable(true);
+            progDailog.show();
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progDailog.dismiss();
+        }
     }
 }
